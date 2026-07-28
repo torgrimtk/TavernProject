@@ -5,10 +5,15 @@ export class TavernScene extends Phaser.Scene {
         super("TavernScene");
     }
 
-    create() {
-        this.add.text(100, 100, "The Weeping Tankard", {
-            fontSize: "32px",
-            color: "#ffffff"
-        });
+    preload() {
+        this.load.image(
+            "tavern-background",
+            "/assets/tavern/tavern-background.png"
+        );
     }
+
+    create() {
+        this.add.image(640, 360, "tavern-background");
+    }
+
 }
