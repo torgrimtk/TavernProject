@@ -18,6 +18,7 @@ The player should feel like they are:
 3. Player earns gold
 4. Player upgrades tavern
 5. The player can also interact with the NPCs
+6. A customer's patience timer begins when their order is placed. Their patience decreases while they're waiting for that order. Once their drink is delivered, the patience timer stops.
 
 ## MVP Features 
 - Tavern room
