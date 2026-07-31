@@ -1,20 +1,13 @@
 # Roadmap
 
-## Milestone 1
+------------------------------------------------------
 
-Goal: 
-A customer enters the tavern. 
+## CHECKLIST.EXE
 
-Tasks: 
-- Create Phaser scene
-- Add tavern background
-- Add customer sprite
-
-## Milestone 2
-
-Goal: 
-Player can serve customer
-
-Tasks: 
-- Add interaction
-- Add reward system
+- [X] Create reusable customer factory (template)
+- [X] Use it to create JohnGhost
+- [X] Create array for the customers to store them
+- [ ] Introduce update()
+- [ ] Decrease patience every 10 seconds
+- [ ] Must add Customer state - What is the customer waiting for? How does that impact their patience timer? 
+- [ ] 
