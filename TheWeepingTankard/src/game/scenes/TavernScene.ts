@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { createCustomer, type Customer, type CustomerEntity } from "../objects/Customer";
+import { createCustomer, type Customer, type CustomerEntity, placeOrder, serveDrink } from "../objects/Customer";
 
 export class TavernScene extends Phaser.Scene {
     customers: CustomerEntity[] = [];
@@ -42,6 +42,16 @@ export class TavernScene extends Phaser.Scene {
                 160
             )
         );
+
+        const ghost = this.customers[0];
+
+        placeOrder(ghost);
+        console.log(ghost.data.state);
+        // console.log(ghost.waitingTime);
+
+        serveDrink(ghost);
+        console.log(ghost.data.state)
+
     }; //end of create()
 
     update(time: number, delta: number) {
