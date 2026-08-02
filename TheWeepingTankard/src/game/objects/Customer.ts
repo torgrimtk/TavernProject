@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 
-// Blueprint of what our customers data looks like
+// Customer data 
 export type Customer = {
     id: string;
     name: string;
@@ -12,7 +12,7 @@ export type Customer = {
     state: CustomerState;
 };
 
-// What type of action is the customer going to do? 
+// Different types of states for the customer 
 export type CustomerState =
     | "entering"
     | "waiting-for-drink"
@@ -35,7 +35,6 @@ export function createCustomer(
     y: number
 ): CustomerEntity {
     const sprite = scene.add.sprite(x, y, spriteKey);
-
     sprite.setInteractive();
 
     return {
