@@ -30,27 +30,26 @@ export class TavernScene extends Phaser.Scene {
             happiness: 100,
             canStartDialogue: true,
             order: "Spooky Rum",
-            state: "waiting-for-drink"
+            state: "entering"
         };
 
-        this.customers.push(
-            createCustomer(
-                this,
-                ghostCustomer,
-                "pixel-ghost2",
-                240,
-                160
-            )
+        const ghost = createCustomer(
+            this,
+            ghostCustomer,
+            "pixel-ghost2",
+            240,
+            160
         );
 
-        const ghost = this.customers[0];
+        ghost.sprite.setScale(0.3);
 
-        placeOrder(ghost);
-        console.log(ghost.data.state);
-        // console.log(ghost.waitingTime);
+        this.customers.push(ghost);
 
-        serveDrink(ghost);
-        console.log(ghost.data.state)
+        ghost.sprite.on("pointerdown", () => {
+            console.log(
+                `${ghost.data.name} is currently ${ghost.data.state}`
+            );
+        });
 
     }; //end of create()
 
@@ -70,4 +69,4 @@ export class TavernScene extends Phaser.Scene {
             }
         }
     }
-}
+} // end of TavernScene
