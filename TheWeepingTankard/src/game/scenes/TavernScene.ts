@@ -3,6 +3,8 @@ import { createCustomer, type Customer, type CustomerEntity, placeOrder, serveDr
 
 export class TavernScene extends Phaser.Scene {
     customers: CustomerEntity[] = [];
+    dialoguePanel: Phaser.GameObjects.Container | null = null;
+    notificationText: Phaser.GameObjects.Text | null = null;
 
     constructor() {
         super("TavernScene");
@@ -17,7 +19,7 @@ export class TavernScene extends Phaser.Scene {
             "pixel-ghost2",
             "/assets/tavern/pixelghost2.png"
         );
-    }
+    }; //end of preload()
 
     create() {
         this.add.image(640, 360, "tavern-background");
@@ -46,9 +48,7 @@ export class TavernScene extends Phaser.Scene {
         this.customers.push(ghost);
 
         ghost.sprite.on("pointerdown", () => {
-            console.log(
-                `${ghost.data.name} is currently ${ghost.data.state}`
-            );
+            this.showCustomerDialogue(ghost);
         });
 
     }; //end of create()
@@ -68,5 +68,111 @@ export class TavernScene extends Phaser.Scene {
                 }
             }
         }
-    }
+    } //end of update()
+
+    showCustomerDialogue(customer: CustomerEntity) {
+        if (this.dialoguePanel) {
+            this.dialoguePanel.destroy()
+        }
+
+        const panel = this.add.rectangle(
+            640,
+            600,
+            500,
+            180,
+            0x222222
+        );
+
+        const nameText = this.add.text(
+            410,
+            530,
+            customer.data.name,
+            {
+                fontSize: "24px",
+                color: "#ffffff"
+            }
+        );
+
+        const orderText = this.add.text(
+            410,
+            570,
+            `"I'd like a ${customer.data.order}"`,
+            {
+                fontSize: "18px",
+                color: "#ffffff"
+            }
+        );
+
+        const orderButton = this.add.rectangle(
+            700,
+            650,
+            160,
+            50,
+            0x444444
+        );
+
+        const orderButtonText = this.add.text(
+            650,
+            635,
+            "Take order",
+            {
+                fontSize: "18px",
+                color: "#ffffff"
+            }
+        );
+
+        orderButton.setInteractive();
+
+        orderButton.on("pointerdown", () => {
+            placeOrder(customer);
+
+            this.dialoguePanel?.destroy();
+            this.dialoguePanel = null;
+
+            this.showNotification(
+                `${customer.data.name} is waiting for his ${customer.data.order}`
+            );
+
+        });
+
+        this.dialoguePanel = this.add.container(
+            0,
+            0,
+            [
+                panel,
+                nameText,
+                orderText,
+                orderButton,
+                orderButtonText
+            ]
+        );
+
+    }; //end of showCustomerDialogue()
+
+    showNotification(message: string) {
+        if (this.notificationText) {
+            this.notificationText.destroy();
+        }
+
+        this.notificationText = this.add.text(
+            640,
+            100,
+            message,
+            {
+                fontSize: "22px",
+                color: "#ffffff",
+                backgroundColor: "#222222",
+                padding: {
+                    x: 15,
+                    y: 10
+                }
+            }
+        ).setOrigin(0.5);
+
+    }; // end of showNotification()
+
+
+
+
+
 } // end of TavernScene
