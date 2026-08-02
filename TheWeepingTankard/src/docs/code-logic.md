@@ -54,3 +54,39 @@ TavernScene
        └── every ~10 seconds
               ↓
           change customer state
+
+
+## 02.08 Current gameplay loop: 
+
+Click JohnGhost
+                     │
+                     ▼
+          showCustomerDialogue()
+                     │
+                     ▼
+        ┌────────────────────────┐
+        │ JohnGhost              │
+        │                        │
+        │ "I'd like a drink."    │
+        │                        │
+        │    [ Take Order ]      │
+        └────────────────────────┘
+                     │
+                     │ click
+                     ▼
+               placeOrder()
+                     │
+                     ▼
+          state = "waiting-for-drink"
+                     │
+                     ▼
+             dialogue closes
+                     │
+                     ▼
+          update() sees the state
+                     │
+                     ▼
+             waitingTime += delta
+                     │
+                     ▼
+             patience decreases
