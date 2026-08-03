@@ -169,6 +169,11 @@ export class TavernScene extends Phaser.Scene {
             }
         ).setOrigin(0.5);
 
+        this.time.delayedCall(3500, () => {
+            this.notificationText?.destroy();
+            this.notificationText = null;
+        });
+
     }; // end of showNotification()
 
 
