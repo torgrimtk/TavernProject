@@ -15,6 +15,7 @@ export type Customer = {
 // Different types of states for the customer 
 export type CustomerState =
     | "entering"
+    | "waiting-to-order"
     | "waiting-for-drink"
     | "drinking"
     | "leaving";
