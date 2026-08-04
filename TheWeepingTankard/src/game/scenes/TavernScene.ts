@@ -71,81 +71,154 @@ export class TavernScene extends Phaser.Scene {
     } //end of update()
 
     showCustomerDialogue(customer: CustomerEntity) {
-        if (this.dialoguePanel) {
-            this.dialoguePanel.destroy()
-        }
-
-        const panel = this.add.rectangle(
-            640,
-            600,
-            500,
-            180,
-            0x222222
-        );
-
-        const nameText = this.add.text(
-            410,
-            530,
-            customer.data.name,
-            {
-                fontSize: "24px",
-                color: "#ffffff"
+        if (customer.data.state === "entering") {
+            if (this.dialoguePanel) {
+                this.dialoguePanel.destroy()
             }
-        );
 
-        const orderText = this.add.text(
-            410,
-            570,
-            `"I'd like a ${customer.data.order}"`,
-            {
-                fontSize: "18px",
-                color: "#ffffff"
-            }
-        );
-
-        const orderButton = this.add.rectangle(
-            700,
-            650,
-            160,
-            50,
-            0x444444
-        );
-
-        const orderButtonText = this.add.text(
-            650,
-            635,
-            "Take order",
-            {
-                fontSize: "18px",
-                color: "#ffffff"
-            }
-        );
-
-        orderButton.setInteractive();
-
-        orderButton.on("pointerdown", () => {
-            placeOrder(customer);
-
-            this.dialoguePanel?.destroy();
-            this.dialoguePanel = null;
-
-            this.showNotification(
-                `${customer.data.name} is waiting for his ${customer.data.order}`
+            const panel = this.add.rectangle(
+                640,
+                600,
+                500,
+                180,
+                0x222222
             );
 
-        });
+            const nameText = this.add.text(
+                410,
+                530,
+                customer.data.name,
+                {
+                    fontSize: "24px",
+                    color: "#ffffff"
+                }
+            );
 
-        this.dialoguePanel = this.add.container(
-            0,
-            0,
-            [
-                panel,
-                nameText,
-                orderText,
-                orderButton,
-                orderButtonText
-            ]
-        );
+            const orderText = this.add.text(
+                410,
+                570,
+                `"I'd like a ${customer.data.order}"`,
+                {
+                    fontSize: "18px",
+                    color: "#ffffff"
+                }
+            );
+
+            const orderButton = this.add.rectangle(
+                700,
+                650,
+                160,
+                50,
+                0x444444
+            );
+
+            const orderButtonText = this.add.text(
+                650,
+                635,
+                "Take order",
+                {
+                    fontSize: "18px",
+                    color: "#ffffff"
+                }
+            );
+
+            orderButton.setInteractive();
+            orderButton.on("pointerdown", () => {
+                placeOrder(customer);
+
+                this.dialoguePanel?.destroy();
+                this.dialoguePanel = null;
+
+                this.showNotification(
+                    `${customer.data.name} is waiting for his ${customer.data.order}`
+                );
+
+            });
+
+            this.dialoguePanel = this.add.container(
+                0,
+                0,
+                [
+                    panel,
+                    nameText,
+                    orderText,
+                    orderButton,
+                    orderButtonText
+                ]
+            );
+
+        } else if (customer.data.state === "waiting-for-drink") {
+
+            const panel = this.add.rectangle(
+                640,
+                600,
+                500,
+                180,
+                0x222222
+            );
+
+            const nameText = this.add.text(
+                410,
+                530,
+                customer.data.name,
+                {
+                    fontSize: "24px",
+                    color: "#ffffff"
+                }
+            );
+
+            const orderText = this.add.rectangle(
+                700,
+                650,
+                160,
+                50,
+                0x4444444
+            );
+
+            const serveButton = this.add.rectangle(
+                700,
+                650,
+                160,
+                50,
+                0x444444
+            );
+
+            const serveButtonText = this.add.text(
+                650,
+                635,
+                "Serve drink",
+                {
+                    fontSize: "18px",
+                    color: "#ffffff"
+                }
+            );
+
+            serveButton.setInteractive();
+
+            serveButton.on("pointerdown", () => {
+                serveDrink(customer);
+
+                this.dialoguePanel?.destroy();
+                this.dialoguePanel = null;
+
+                this.showNotification(
+                    `${customer.data.name} is now drinking his ${customer.data.order}`
+                );
+            });
+
+            this.dialoguePanel = this.add.container(
+                0,
+                0,
+                [
+                    panel,
+                    nameText,
+                    orderText,
+                    serveButton,
+                    serveButtonText
+                ]
+            );
+        };
+
 
     }; //end of showCustomerDialogue()
 

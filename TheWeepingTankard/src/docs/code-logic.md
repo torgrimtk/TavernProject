@@ -90,3 +90,39 @@ Click JohnGhost
                      │
                      ▼
              patience decreases
+
+## 04.08 Update to current gameplay loop, more specifically TavernScene.ts
+             JohnGhost
+                 │
+                 ▼
+             "entering"
+                 │
+             Click ghost
+                 │
+                 ▼
+      ┌─────────────────────┐
+      │ "I'd like a Rum."   │
+      │                     │
+      │    [Take Order]     │
+      └──────────┬──────────┘
+                 │
+                 ▼
+            placeOrder()
+                 │
+                 ▼
+       "waiting-for-drink"
+                 │
+             Click ghost
+                 │
+                 ▼
+      ┌─────────────────────────┐
+      │ "I'm waiting for Rum."  │
+      │                         │
+      │    [Serve Drink]        │
+      └────────────┬────────────┘
+                   │
+                   ▼
+              serveDrink()
+                   │
+                   ▼
+              "drinking"
