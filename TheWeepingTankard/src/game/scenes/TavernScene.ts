@@ -39,13 +39,18 @@ export class TavernScene extends Phaser.Scene {
             this,
             ghostCustomer,
             "pixel-ghost2",
-            240,
-            160
+            50,
+            350,
         );
 
         ghost.sprite.setScale(0.3);
 
         this.customers.push(ghost);
+        this.enterCustomer(
+            ghost,
+            240,
+            160,
+        );
 
         ghost.sprite.on("pointerdown", () => {
             this.showCustomerDialogue(ghost);
@@ -55,7 +60,7 @@ export class TavernScene extends Phaser.Scene {
 
     update(time: number, delta: number) {
         for (const customer of this.customers) {
-            if (customer.data.state === "waiting-for-drink") {
+            if (customer.data.state === "waiting-to-order") {
                 customer.waitingTime += delta;
 
                 if (customer.waitingTime >= 10000) {
@@ -71,7 +76,7 @@ export class TavernScene extends Phaser.Scene {
     } //end of update()
 
     showCustomerDialogue(customer: CustomerEntity) {
-        if (customer.data.state === "entering") {
+        if (customer.data.state === "waiting-to-order") {
             if (this.dialoguePanel) {
                 this.dialoguePanel.destroy()
             }
@@ -167,12 +172,14 @@ export class TavernScene extends Phaser.Scene {
                 }
             );
 
-            const orderText = this.add.rectangle(
-                700,
-                650,
-                160,
-                50,
-                0x4444444
+            const orderText = this.add.text(
+                410,
+                570,
+                `"I'm waiting for my ${customer.data.order}"`,
+                {
+                    fontSize: "18px",
+                    color: "#ffffff"
+                }
             );
 
             const serveButton = this.add.rectangle(
@@ -248,6 +255,22 @@ export class TavernScene extends Phaser.Scene {
         });
 
     }; // end of showNotification()
+
+    enterCustomer(customer: CustomerEntity, destinationX: number, destinationY: number) {
+
+        this.tweens.add({
+            targets: customer.sprite,
+
+            x: destinationX,
+            y: destinationY,
+            duration: 2000,
+
+            onComplete: () => {
+                console.log("Tween finished!");
+                customer.data.state = "waiting-to-order";
+            }
+        });
+    }
 
 
 
