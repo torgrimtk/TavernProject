@@ -1,8 +1,10 @@
 import Phaser from "phaser";
-import { createCustomer, type Customer, type CustomerEntity } from "../objects/Customer";
+import { createCustomer, type Customer, type CustomerEntity, placeOrder, serveDrink } from "../objects/Customer";
 
 export class TavernScene extends Phaser.Scene {
     customers: CustomerEntity[] = [];
+    dialoguePanel: Phaser.GameObjects.Container | null = null;
+    notificationText: Phaser.GameObjects.Text | null = null;
 
     constructor() {
         super("TavernScene");
@@ -17,7 +19,7 @@ export class TavernScene extends Phaser.Scene {
             "pixel-ghost2",
             "/assets/tavern/pixelghost2.png"
         );
-    }
+    }; //end of preload()
 
     create() {
         this.add.image(640, 360, "tavern-background");
@@ -30,23 +32,35 @@ export class TavernScene extends Phaser.Scene {
             happiness: 100,
             canStartDialogue: true,
             order: "Spooky Rum",
-            state: "waiting-for-drink"
+            state: "entering"
         };
 
-        this.customers.push(
-            createCustomer(
-                this,
-                ghostCustomer,
-                "pixel-ghost2",
-                240,
-                160
-            )
+        const ghost = createCustomer(
+            this,
+            ghostCustomer,
+            "pixel-ghost2",
+            50,
+            350,
         );
+
+        ghost.sprite.setScale(0.3);
+
+        this.customers.push(ghost);
+        this.enterCustomer(
+            ghost,
+            240,
+            160,
+        );
+
+        ghost.sprite.on("pointerdown", () => {
+            this.showCustomerDialogue(ghost);
+        });
+
     }; //end of create()
 
     update(time: number, delta: number) {
         for (const customer of this.customers) {
-            if (customer.data.state === "waiting-for-drink") {
+            if (customer.data.state === "waiting-to-order") {
                 customer.waitingTime += delta;
 
                 if (customer.waitingTime >= 10000) {
@@ -59,5 +73,207 @@ export class TavernScene extends Phaser.Scene {
                 }
             }
         }
+    } //end of update()
+
+    showCustomerDialogue(customer: CustomerEntity) {
+        if (customer.data.state === "waiting-to-order") {
+            if (this.dialoguePanel) {
+                this.dialoguePanel.destroy()
+            }
+
+            const panel = this.add.rectangle(
+                640,
+                600,
+                500,
+                180,
+                0x222222
+            );
+
+            const nameText = this.add.text(
+                410,
+                530,
+                customer.data.name,
+                {
+                    fontSize: "24px",
+                    color: "#ffffff"
+                }
+            );
+
+            const orderText = this.add.text(
+                410,
+                570,
+                `"I'd like a ${customer.data.order}"`,
+                {
+                    fontSize: "18px",
+                    color: "#ffffff"
+                }
+            );
+
+            const orderButton = this.add.rectangle(
+                700,
+                650,
+                160,
+                50,
+                0x444444
+            );
+
+            const orderButtonText = this.add.text(
+                650,
+                635,
+                "Take order",
+                {
+                    fontSize: "18px",
+                    color: "#ffffff"
+                }
+            );
+
+            orderButton.setInteractive();
+            orderButton.on("pointerdown", () => {
+                placeOrder(customer);
+
+                this.dialoguePanel?.destroy();
+                this.dialoguePanel = null;
+
+                this.showNotification(
+                    `${customer.data.name} is waiting for his ${customer.data.order}`
+                );
+
+            });
+
+            this.dialoguePanel = this.add.container(
+                0,
+                0,
+                [
+                    panel,
+                    nameText,
+                    orderText,
+                    orderButton,
+                    orderButtonText
+                ]
+            );
+
+        } else if (customer.data.state === "waiting-for-drink") {
+
+            const panel = this.add.rectangle(
+                640,
+                600,
+                500,
+                180,
+                0x222222
+            );
+
+            const nameText = this.add.text(
+                410,
+                530,
+                customer.data.name,
+                {
+                    fontSize: "24px",
+                    color: "#ffffff"
+                }
+            );
+
+            const orderText = this.add.text(
+                410,
+                570,
+                `"I'm waiting for my ${customer.data.order}"`,
+                {
+                    fontSize: "18px",
+                    color: "#ffffff"
+                }
+            );
+
+            const serveButton = this.add.rectangle(
+                700,
+                650,
+                160,
+                50,
+                0x444444
+            );
+
+            const serveButtonText = this.add.text(
+                650,
+                635,
+                "Serve drink",
+                {
+                    fontSize: "18px",
+                    color: "#ffffff"
+                }
+            );
+
+            serveButton.setInteractive();
+
+            serveButton.on("pointerdown", () => {
+                serveDrink(customer);
+
+                this.dialoguePanel?.destroy();
+                this.dialoguePanel = null;
+
+                this.showNotification(
+                    `${customer.data.name} is now drinking his ${customer.data.order}`
+                );
+            });
+
+            this.dialoguePanel = this.add.container(
+                0,
+                0,
+                [
+                    panel,
+                    nameText,
+                    orderText,
+                    serveButton,
+                    serveButtonText
+                ]
+            );
+        };
+
+
+    }; //end of showCustomerDialogue()
+
+    showNotification(message: string) {
+        if (this.notificationText) {
+            this.notificationText.destroy();
+        }
+
+        this.notificationText = this.add.text(
+            640,
+            100,
+            message,
+            {
+                fontSize: "22px",
+                color: "#ffffff",
+                backgroundColor: "#222222",
+                padding: {
+                    x: 15,
+                    y: 10
+                }
+            }
+        ).setOrigin(0.5);
+
+        this.time.delayedCall(3500, () => {
+            this.notificationText?.destroy();
+            this.notificationText = null;
+        });
+
+    }; // end of showNotification()
+
+    enterCustomer(customer: CustomerEntity, destinationX: number, destinationY: number) {
+
+        this.tweens.add({
+            targets: customer.sprite,
+
+            x: destinationX,
+            y: destinationY,
+            duration: 2000,
+
+            onComplete: () => {
+                console.log("Tween finished!");
+                customer.data.state = "waiting-to-order";
+            }
+        });
     }
-}
+
+
+
+
+
+} // end of TavernScene

@@ -54,3 +54,75 @@ TavernScene
        └── every ~10 seconds
               ↓
           change customer state
+
+
+## 02.08 Current gameplay loop: 
+
+Click JohnGhost
+                     │
+                     ▼
+          showCustomerDialogue()
+                     │
+                     ▼
+        ┌────────────────────────┐
+        │ JohnGhost              │
+        │                        │
+        │ "I'd like a drink."    │
+        │                        │
+        │    [ Take Order ]      │
+        └────────────────────────┘
+                     │
+                     │ click
+                     ▼
+               placeOrder()
+                     │
+                     ▼
+          state = "waiting-for-drink"
+                     │
+                     ▼
+             dialogue closes
+                     │
+                     ▼
+          update() sees the state
+                     │
+                     ▼
+             waitingTime += delta
+                     │
+                     ▼
+             patience decreases
+
+## 04.08 Update to current gameplay loop, more specifically TavernScene.ts
+             JohnGhost
+                 │
+                 ▼
+             "entering"
+                 │
+             Click ghost
+                 │
+                 ▼
+      ┌─────────────────────┐
+      │ "I'd like a Rum."   │
+      │                     │
+      │    [Take Order]     │
+      └──────────┬──────────┘
+                 │
+                 ▼
+            placeOrder()
+                 │
+                 ▼
+       "waiting-for-drink"
+                 │
+             Click ghost
+                 │
+                 ▼
+      ┌─────────────────────────┐
+      │ "I'm waiting for Rum."  │
+      │                         │
+      │    [Serve Drink]        │
+      └────────────┬────────────┘
+                   │
+                   ▼
+              serveDrink()
+                   │
+                   ▼
+              "drinking"
